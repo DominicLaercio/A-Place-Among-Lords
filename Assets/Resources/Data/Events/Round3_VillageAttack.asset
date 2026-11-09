@@ -1,0 +1,142 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d4bd92b7fb487bb4e3abc40fb34f0c, type: 3}
+  m_Name: Round3_VillageAttack
+  m_EditorClassIdentifier: 
+  eventId: village_attack
+  roundNumber: 3
+  isFinalEvent: 0
+  title: "An Attack Threatens the Village"
+  description: "An armed group attacked a Mondna village during the night. Homes were set ablaze, and the villagers are seeking shelter. You can combine measures as long as you have the resources: evacuate the families, defend the village, and, if your Diplomacy allows, negotiate safe passage."
+  stages:
+  - stageId: actions
+    title: "Village Actions"
+    selectionMode: 1
+    minimumSelections: 1
+    manualCompletion: 1
+  choices:
+  - choiceId: evacuate_villagers
+    stageId: actions
+    buttonLabel: "Evacuate villagers to the castle (2 Supplies, 1 Troop)"
+    resultText: "Evacuation organized. Reputation +2, Mother +1; Supplies −2 and Troops −1."
+    conditions:
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "You need 2 Supplies to organize the evacuation."
+    - conditionType: 1
+      attribute: 0
+      resource: 4
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "You need 1 Troop to organize the evacuation."
+    effects:
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -2
+    - effectType: 0
+      resource: 4
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 2
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 2
+      amount: 1
+  - choiceId: defend_village
+    stageId: actions
+    buttonLabel: "Send the militia to defend the village (2 Troops, 1 Treasury)"
+    resultText: "Village defended. Reputation +1, General +1, and Crown +1; Troops −2 and Treasury −1."
+    conditions:
+    - conditionType: 1
+      attribute: 0
+      resource: 4
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "You need 2 Troops to deploy the militia."
+    - conditionType: 1
+      attribute: 0
+      resource: 1
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "You need 1 Treasury to deploy the militia."
+    effects:
+    - effectType: 0
+      resource: 4
+      relationshipTarget: 0
+      amount: -2
+    - effectType: 0
+      resource: 1
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 1
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: 1
+  - choiceId: negotiate_passage
+    stageId: actions
+    buttonLabel: "Negotiate safe passage (Diplomacy 3, 1 Influence, 1 Supply)"
+    resultText: "Safe passage negotiated. Reputation +1, Mother +1, and Rebels +1; Influence −1 and Supplies −1."
+    conditions:
+    - conditionType: 0
+      attribute: 0
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 3
+      failureMessage: "Negotiating safe passage requires Diplomacy 3."
+    - conditionType: 1
+      attribute: 0
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "You need 1 Influence to negotiate safe passage."
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "You need 1 Supply to negotiate safe passage."
+    effects:
+    - effectType: 0
+      resource: 0
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 2
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: 1

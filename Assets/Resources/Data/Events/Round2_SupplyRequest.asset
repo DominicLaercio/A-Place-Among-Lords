@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d4bd92b7fb487bb4e3abc40fb34f0c, type: 3}
+  m_Name: Round2_SupplyRequest
+  m_EditorClassIdentifier: 
+  eventId: supply_request
+  roundNumber: 2
+  isFinalEvent: 0
+  title: "The Rebels Request Supplies"
+  description: "A rebel messenger arrives at the castle. The insurgent forces ask for three units of supplies to continue their campaign. The request carries political risks: helping may improve your standing with the rebels and anger the Crown; refusing protects your stores and brings you closer to the king."
+  stages:
+  - stageId: decision
+    title: "Respond to the Request"
+    selectionMode: 0
+    minimumSelections: 1
+    manualCompletion: 0
+  choices:
+  - choiceId: send_supplies
+    stageId: decision
+    buttonLabel: "Send three units of supplies"
+    resultText: "Supplies sent. Rebels +2, Crown −1, and Reputation +1."
+    conditions:
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 3
+      failureMessage: "You need at least 3 Supplies to send this aid."
+    effects:
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -3
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: 2
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: -1
+  - choiceId: refuse_request
+    stageId: decision
+    buttonLabel: "Refuse the request and preserve your stores"
+    resultText: "Request refused. Rebels −2, Crown +1, Influence +1, and Treasury +1."
+    conditions: []
+    effects:
+    - effectType: 0
+      resource: 0
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 0
+      resource: 1
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: -2
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: 1
+  - choiceId: negotiate_limited_aid
+    stageId: decision
+    buttonLabel: "Negotiate limited aid (Diplomacy 2+, Supplies 2+)"
+    resultText: "Limited aid negotiated. Rebels +1, Steward +1; Supplies −2 and Influence +1."
+    conditions:
+    - conditionType: 0
+      attribute: 0
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Negotiating limited aid requires Diplomacy 2."
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Negotiating limited aid requires at least 2 Supplies."
+    effects:
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -2
+    - effectType: 0
+      resource: 0
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 0
+      amount: 1

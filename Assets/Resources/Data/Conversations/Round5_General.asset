@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61a6c5b794a546cb8ec4be3c5afc9401, type: 3}
+  m_Name: Round5_General
+  m_EditorClassIdentifier: 
+  dialogueId: round5_general
+  roundNumber: 5
+  conversationKey: general
+  speakerName: "General"
+  openingText: "The general advises mustering the reserves or fortifying the roads. He wants to know under which banner House Mondna will march."
+  relationshipTarget: 1
+  responses:
+  - playerResponse: "Recognize the general's experience"
+    characterReply: "The general accepts your confidence and promises to prepare the men."
+    relationshipChange: 1
+  - playerResponse: "Challenge the general's proposal"
+    characterReply: "The general disagrees with your assessment, and the relationship between you grows more tense."
+    relationshipChange: -1

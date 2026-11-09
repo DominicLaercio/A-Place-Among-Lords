@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61a6c5b794a546cb8ec4be3c5afc9401, type: 3}
+  m_Name: Round1_Administrator
+  m_EditorClassIdentifier: 
+  dialogueId: round1_administrator
+  roundNumber: 1
+  conversationKey: administrator
+  speakerName: "Steward"
+  openingText: "The steward reminds you that the treasury and granaries must sustain every political decision."
+  relationshipTarget: 0
+  responses:
+  - playerResponse: "Thank the steward for his analysis"
+    characterReply: "The steward is pleased that you considered his advice."
+    relationshipChange: 1
+  - playerResponse: "Ask for more evidence before deciding"
+    characterReply: "The steward notes your questions and returns to the records without resentment."
+    relationshipChange: 0

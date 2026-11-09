@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d4bd92b7fb487bb4e3abc40fb34f0c, type: 3}
+  m_Name: Round5_FinalPreparation
+  m_EditorClassIdentifier: 
+  eventId: final_preparation
+  roundNumber: 5
+  isFinalEvent: 1
+  title: "The Armies Draw Near"
+  description: "The Crown and rebel armies are drawing closer. Your decision will soon determine the fate of the Mondna lands."
+  stages:
+  - stageId: faction
+    title: "Choose a Faction"
+    selectionMode: 0
+    minimumSelections: 1
+    manualCompletion: 0
+  - stageId: preparations
+    title: "Prepare for Battle"
+    selectionMode: 1
+    minimumSelections: 1
+    manualCompletion: 1
+  choices:
+  - choiceId: choose_crown
+    stageId: faction
+    buttonLabel: "Support the Crown"
+    resultText: "You have declared support for the Crown. Now prepare your forces."
+    conditions: []
+    effects:
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: 1
+  - choiceId: choose_rebels
+    stageId: faction
+    buttonLabel: "Support the Rebels"
+    resultText: "You have declared support for the rebels. Now prepare your forces."
+    conditions: []
+    effects:
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: 1
+  - choiceId: muster_reserves
+    stageId: preparations
+    buttonLabel: "Muster reserves (Warfare 2+, 2 Treasury): +3 Troops"
+    resultText: "Reserves mustered: Troops +3, General +1, and Treasury −2."
+    conditions:
+    - conditionType: 0
+      attribute: 1
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Mustering reserves requires Warfare 2."
+    - conditionType: 1
+      attribute: 0
+      resource: 1
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Mustering reserves requires 2 Treasury."
+    effects:
+    - effectType: 0
+      resource: 1
+      relationshipTarget: 0
+      amount: -2
+    - effectType: 0
+      resource: 4
+      relationshipTarget: 0
+      amount: 3
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 1
+      amount: 1
+  - choiceId: fortify_approaches
+    stageId: preparations
+    buttonLabel: "Fortify the approaches (Management 2+, 2 Treasury, 1 Supply)"
+    resultText: "Approaches fortified: Reputation +1, Steward +1; Treasury −2 and Supplies −1."
+    conditions:
+    - conditionType: 0
+      attribute: 2
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Fortifying requires Management 2."
+    - conditionType: 1
+      attribute: 0
+      resource: 1
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Fortifying requires 2 Treasury."
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "Fortifying requires 1 Supply."
+    effects:
+    - effectType: 0
+      resource: 1
+      relationshipTarget: 0
+      amount: -2
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 0
+      amount: 1
+  - choiceId: stock_provisions
+    stageId: preparations
+    buttonLabel: "Stock provisions (2 Treasury): +3 Supplies"
+    resultText: "Provisions stored: Supplies +3, Steward +1, and Treasury −2."
+    conditions:
+    - conditionType: 1
+      attribute: 0
+      resource: 1
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Stocking provisions requires 2 Treasury."
+    effects:
+    - effectType: 0
+      resource: 1
+      relationshipTarget: 0
+      amount: -2
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: 3
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 0
+      amount: 1

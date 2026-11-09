@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d4bd92b7fb487bb4e3abc40fb34f0c, type: 3}
+  m_Name: Round4_RefugeeArrival
+  m_EditorClassIdentifier: 
+  eventId: refugee_arrival
+  roundNumber: 4
+  isFinalEvent: 0
+  title: "A Noble Refugee Arrives in Mondna"
+  description: "A noble refugee arrives in Mondna lands. Loyal to the Crown, he says he escaped a city taken by the rebels. He carries sealed documents and asks for shelter until he can reach the royal army. His presence may protect your family, but could also make Mondna lands a target."
+  stages:
+  - stageId: decision
+    title: "Decide the Refugee's Fate"
+    selectionMode: 0
+    minimumSelections: 1
+    manualCompletion: 0
+  choices:
+  - choiceId: grant_shelter
+    stageId: decision
+    buttonLabel: "Grant shelter in the castle (1 Supply)"
+    resultText: "Shelter granted. Refugee Noble +2, Crown +2, Rebels −1, and Reputation +1; Supplies −1."
+    conditions:
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "You need 1 Supply to shelter the noble."
+    effects:
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 3
+      amount: 2
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: 2
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: -1
+  - choiceId: refuse_entry
+    stageId: decision
+    buttonLabel: "Refuse entry and remain neutral"
+    resultText: "Entry refused. Refugee Noble −2, Crown −1, Rebels +1, and Influence +1."
+    conditions: []
+    effects:
+    - effectType: 0
+      resource: 0
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 3
+      amount: -2
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: -1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 5
+      amount: 1
+  - choiceId: verify_papers
+    stageId: decision
+    buttonLabel: "Verify the papers and grant supervised shelter (Diplomacy 2+, 1 Influence, 1 Supply)"
+    resultText: "Papers verified. Refugee Noble +1, Crown +1, Steward +1, and Reputation +1; Influence −1 and Supplies −1."
+    conditions:
+    - conditionType: 0
+      attribute: 0
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 2
+      failureMessage: "Verifying the papers requires Diplomacy 2."
+    - conditionType: 1
+      attribute: 0
+      resource: 0
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "Verifying the papers requires 1 Influence."
+    - conditionType: 1
+      attribute: 0
+      resource: 2
+      relationshipTarget: 0
+      minimumValue: 1
+      failureMessage: "Verifying the papers requires 1 Supply."
+    effects:
+    - effectType: 0
+      resource: 2
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 0
+      relationshipTarget: 0
+      amount: -1
+    - effectType: 0
+      resource: 3
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 3
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 4
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 0
+      amount: 1

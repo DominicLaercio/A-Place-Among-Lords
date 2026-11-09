@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d4bd92b7fb487bb4e3abc40fb34f0c, type: 3}
+  m_Name: Round1_Succession
+  m_EditorClassIdentifier: 
+  eventId: succession
+  roundNumber: 1
+  isFinalEvent: 0
+  title: "Succession and First Responsibilities"
+  description: "With your father's death, the Mondna lands are now your responsibility. Two letters await your reply: one from the Crown, the other from the rebels."
+  stages:
+  - stageId: decision
+    title: "Make a Decision"
+    selectionMode: 0
+    minimumSelections: 1
+    manualCompletion: 0
+  choices:
+  - choiceId: prioritize_peace
+    stageId: decision
+    buttonLabel: "Seek peace and hear both sides"
+    resultText: "Your conciliatory approach pleased your mother and the general. Influence +1."
+    conditions: []
+    effects:
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 2
+      amount: 1
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 1
+      amount: 1
+    - effectType: 0
+      resource: 0
+      relationshipTarget: 0
+      amount: 1
+  - choiceId: secure_household
+    stageId: decision
+    buttonLabel: "Protect House Mondna First"
+    resultText: "The steward approved of your prudence. Treasury +2."
+    conditions: []
+    effects:
+    - effectType: 1
+      resource: 0
+      relationshipTarget: 0
+      amount: 1
+    - effectType: 0
+      resource: 1
+      relationshipTarget: 0
+      amount: 2

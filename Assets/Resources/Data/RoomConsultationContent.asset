@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e76c8ecf1674cff92d1996fdb9a4a14, type: 3}
+  m_Name: RoomConsultationContent
+  m_EditorClassIdentifier: 
+  noSelectionText: "Select a person or message in the hall to view its conversation."
+  missingContentText: "No map description is configured for this round."
+  mapDescriptions:
+  - roundNumber: 1
+    text: "The map shows the Mondna lands between the royal road and the valley villages. Letters from both sides have arrived at the castle."
+  - roundNumber: 2
+    text: "The southern road connects the castle to rebel lands. The messenger requests provisions for this route."
+  - roundNumber: 3
+    text: "The attacked village lies near the road and needs help from the castle."
+  - roundNumber: 4
+    text: "The refugee came from the borderlands taken by the rebels. The royal road passes through Mondna lands."
+  - roundNumber: 5
+    text: "Scouts spotted both armies to the east. Their routes of march cross Mondna territory."
