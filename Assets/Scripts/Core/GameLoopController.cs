@@ -9,7 +9,6 @@ namespace APlaceAmongLords.Core
     /// <summary>Temporary prototype interface for validating decisions and consequences.</summary>
     public sealed class GameLoopController : MonoBehaviour
     {
-        private const int AttributePointBudget = 8;
         // IMGUI dimensions in pixels. Adjust these values to resize the panels.
         private const float RoomMinWidth = 320f;
         private const float RoomMaxWidth = 850f;
@@ -36,24 +35,16 @@ namespace APlaceAmongLords.Core
         {
             state = new GameState();
             GameEventDefinition[] loadedEvents = Resources.LoadAll<GameEventDefinition>("Data/Events");
+            foreach (string error in GameEventValidator.ValidateCatalog(loadedEvents, GameState.TotalRounds))
+                Debug.LogError(error);
+
             HashSet<string> eventIds = new HashSet<string>();
             foreach (GameEventDefinition gameEvent in loadedEvents)
             {
-                if (gameEvent == null || gameEvent.roundNumber < 1 || gameEvent.roundNumber > GameState.TotalRounds || string.IsNullOrEmpty(gameEvent.eventId))
-                {
-                    Debug.LogError("An event asset has an invalid round number or event ID.");
+                if (gameEvent == null || GameEventValidator.ValidateDefinition(gameEvent, GameState.TotalRounds).Count > 0)
                     continue;
-                }
-                if (!ValidateEventAsset(gameEvent) || !eventIds.Add(gameEvent.eventId))
-                {
-                    Debug.LogError("Event " + gameEvent.eventId + " has invalid or duplicate configuration.", gameEvent);
+                if (!eventIds.Add(gameEvent.eventId) || eventsByRound.ContainsKey(gameEvent.roundNumber))
                     continue;
-                }
-                if (eventsByRound.ContainsKey(gameEvent.roundNumber))
-                {
-                    Debug.LogError("More than one event is configured for round " + gameEvent.roundNumber + ".");
-                    continue;
-                }
                 eventsByRound.Add(gameEvent.roundNumber, gameEvent);
             }
             roomConsultationContent = Resources.Load<RoomConsultationContent>("Data/RoomConsultationContent");
@@ -72,39 +63,6 @@ namespace APlaceAmongLords.Core
 
                 dialogues.Add(lookupKey, dialogue);
             }
-        }
-
-        private bool ValidateEventAsset(GameEventDefinition gameEvent)
-        {
-            if (gameEvent.stages == null || gameEvent.stages.Count == 0 || gameEvent.choices == null || gameEvent.choices.Count == 0)
-                return false;
-
-            HashSet<string> stageIds = new HashSet<string>();
-            foreach (GameEventStage stage in gameEvent.stages)
-            {
-                if (stage == null || string.IsNullOrEmpty(stage.stageId) || stage.minimumSelections < 1 ||
-                    !Enum.IsDefined(typeof(EventSelectionMode), stage.selectionMode) || !stageIds.Add(stage.stageId))
-                    return false;
-            }
-
-            HashSet<string> choiceIds = new HashSet<string>();
-            foreach (GameChoiceDefinition choice in gameEvent.choices)
-            {
-                if (choice == null || string.IsNullOrEmpty(choice.choiceId) || string.IsNullOrEmpty(choice.buttonLabel) ||
-                    !stageIds.Contains(choice.stageId) || !choiceIds.Add(choice.choiceId))
-                    return false;
-            }
-
-            foreach (GameEventStage stage in gameEvent.stages)
-            {
-                int stageChoiceCount = 0;
-                foreach (GameChoiceDefinition choice in gameEvent.choices)
-                    if (choice.stageId == stage.stageId) stageChoiceCount++;
-                if (stage.minimumSelections > stageChoiceCount ||
-                    (stage.selectionMode == EventSelectionMode.SingleChoice && stage.minimumSelections != 1))
-                    return false;
-            }
-            return true;
         }
 
         private void OnGUI()
@@ -136,16 +94,16 @@ namespace APlaceAmongLords.Core
                 LoadGame();
 
             GUILayout.Label("Allocate your attributes");
-            GUILayout.Label("Points remaining: " + (AttributePointBudget - TotalAllocated()));
+            GUILayout.Label("Points remaining: " + (GameState.AttributePointBudget - TotalAllocated()));
             DrawAttributeRow("Diplomacy", ref diplomacy);
             DrawAttributeRow("Warfare", ref warfare);
             DrawAttributeRow("Management", ref management);
             DrawAttributeRow("Combat", ref combat);
 
-            GUI.enabled = TotalAllocated() == AttributePointBudget;
+            GUI.enabled = TotalAllocated() == GameState.AttributePointBudget;
             if (GUILayout.Button("Begin the first round", GUILayout.Height(36)))
             {
-                if (state.Attributes.TryAllocate(diplomacy, warfare, management, combat, AttributePointBudget))
+                if (state.Attributes.TryAllocate(diplomacy, warfare, management, combat, GameState.AttributePointBudget))
                     notice = "The succession begins. Read the letters and speak with your advisors.";
             }
             GUI.enabled = true;
@@ -157,7 +115,7 @@ namespace APlaceAmongLords.Core
             GUILayout.Label(label, GUILayout.Width(230));
             if (GUILayout.Button("−", GUILayout.Width(36)) && value > 0) value--;
             GUILayout.Label(value.ToString(), GUILayout.Width(36));
-            if (GUILayout.Button("+", GUILayout.Width(36)) && TotalAllocated() < AttributePointBudget) value++;
+            if (GUILayout.Button("+", GUILayout.Width(36)) && TotalAllocated() < GameState.AttributePointBudget) value++;
             GUILayout.EndHorizontal();
         }
 

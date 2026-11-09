@@ -1,0 +1,22 @@
+{
+  "name": "APlaceAmongLords.Tests.EditMode",
+  "rootNamespace": "APlaceAmongLords.Tests.EditMode",
+  "references": [
+    "APlaceAmongLords.Core",
+    "APlaceAmongLords.Data"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

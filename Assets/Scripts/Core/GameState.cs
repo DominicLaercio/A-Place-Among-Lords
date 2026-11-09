@@ -17,6 +17,7 @@ namespace APlaceAmongLords.Core
     public sealed class GameState
     {
         public const int TotalRounds = 5;
+        public const int AttributePointBudget = 8;
         public int CurrentRound { get; private set; } = 1;
         public bool IsComplete { get; private set; }
         public AttributeSet Attributes { get; private set; }
@@ -29,9 +30,8 @@ namespace APlaceAmongLords.Core
         public GameState()
         {
             Attributes = new AttributeSet();
-            Resources = new ResourceSet();
+            Resources = ResourceSet.FromValues(2, 10, 8, 0, 20);
             Relationships = new RelationshipSet();
-            Resources.SetStartingValues(2, 10, 8, 0, 20);
         }
 
         public bool HasRespondedTo(RelationshipTarget target)
@@ -244,8 +244,8 @@ namespace APlaceAmongLords.Core
             state.CurrentRound = Math.Max(1, Math.Min(TotalRounds, data.currentRound));
             state.IsComplete = data.isComplete;
             if (data.attributesAllocated)
-                state.Attributes.TryAllocate(data.diplomacy, data.warfare, data.management, data.combat, 8);
-            state.Resources.SetStartingValues(data.influence, data.treasury, data.supplies, data.reputation, data.troops);
+                state.Attributes.TryAllocate(data.diplomacy, data.warfare, data.management, data.combat, AttributePointBudget);
+            state.Resources = ResourceSet.FromValues(data.influence, data.treasury, data.supplies, data.reputation, data.troops);
 
             int relationshipIndex = 0;
             foreach (RelationshipTarget target in Enum.GetValues(typeof(RelationshipTarget)))

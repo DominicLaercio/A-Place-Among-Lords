@@ -5,6 +5,8 @@ namespace APlaceAmongLords.Data
     [Serializable]
     public sealed class ResourceSet
     {
+        private ResourceSet() { }
+
         public int Influence { get; private set; }
         public int Treasury { get; private set; }
         public int Supplies { get; private set; }
@@ -37,13 +39,16 @@ namespace APlaceAmongLords.Data
             }
         }
 
-        internal void SetStartingValues(int influence, int treasury, int supplies, int reputation, int troops)
+        public static ResourceSet FromValues(int influence, int treasury, int supplies, int reputation, int troops)
         {
-            Influence = Math.Max(0, influence);
-            Treasury = Math.Max(0, treasury);
-            Supplies = Math.Max(0, supplies);
-            Reputation = Math.Max(0, reputation);
-            Troops = Math.Max(0, troops);
+            return new ResourceSet
+            {
+                Influence = Math.Max(0, influence),
+                Treasury = Math.Max(0, treasury),
+                Supplies = Math.Max(0, supplies),
+                Reputation = Math.Max(0, reputation),
+                Troops = Math.Max(0, troops)
+            };
         }
     }
 }

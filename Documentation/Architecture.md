@@ -6,12 +6,13 @@ This document describes the prototype as currently implemented. It is a record o
 
 Narrative content is authored in Unity `ScriptableObject` assets. At startup, `GameLoopController` loads event assets from `Resources/Data/Events` and indexes them by round. It also loads dialogue and room consultation assets. The controller renders the current round and sends player actions to `GameState`.
 
-`GameEventRules` evaluates whether a choice is currently available and applies its configured effects. `GameState` owns the current run, tracks selected choices and completed stages, records conversation responses, and advances rounds only after the current event is complete. The controller serializes a snapshot to JSON in `Application.persistentDataPath` when the player saves.
+`GameEventValidator` checks the event catalog and each event definition at startup. Invalid definitions are reported in the Console and excluded from play. The same validator is covered by Edit Mode tests. `GameEventRules` evaluates whether a choice is currently available and applies its configured effects. `GameState` owns the current run, tracks selected choices and completed stages, records conversation responses, and advances rounds only after the current event is complete. The controller serializes a snapshot to JSON in `Application.persistentDataPath` when the player saves.
 
 ```mermaid
 flowchart LR
     UI[GameLoopController] -->|reads and presents| State[GameState]
     UI -->|loads| Events[GameEventDefinition assets]
+    UI -->|validates at startup| Validator[GameEventValidator]
     UI -->|loads| Dialogues[DialogueDefinition assets]
     UI -->|save/load JSON| Save[GameSaveData]
     State -->|checks and applies| Rules[GameEventRules]
@@ -129,6 +130,11 @@ classDiagram
         +ApplyEffects(state, choice)
     }
 
+    class GameEventValidator {
+        +ValidateCatalog(events, totalRounds)
+        +ValidateDefinition(event, totalRounds)
+    }
+
     class GameSaveData {
         +int saveVersion
         +int currentRound
@@ -164,6 +170,7 @@ classDiagram
     GameState *-- RelationshipSet
     GameState *-- EventProgress
     GameState ..> GameEventRules : resolves choices
+    GameLoopController ..> GameEventValidator : checks assets
     GameEventDefinition *-- GameEventStage
     GameEventDefinition *-- GameChoiceDefinition
     GameChoiceDefinition *-- GameCondition
@@ -210,6 +217,7 @@ Conversation responses are available alongside event progression. They are limit
 | Choice | Current use | Reason |
 | --- | --- | --- |
 | Data-driven definitions | `GameEventDefinition` and `DialogueDefinition` are Unity `ScriptableObject` assets. | Content and conditions can be edited in Unity without adding a new resolution method for every decision. |
+| Catalog validation | `GameEventValidator` checks event definitions and round coverage at startup and in Edit Mode tests. | Reports malformed content before the player reaches the affected round. |
 | Rules/domain service | Static `GameEventRules` checks choice conditions and applies effects. | Keeps condition/effect evaluation out of the IMGUI drawing code and centralizes the rules. |
 | State object | `GameState` owns the run's values, event progress and conversation response flags. | Gives UI and save/load a single runtime model to read or update through methods. |
 | Configuration-driven staged flow | `GameEventStage` configures single/multiple selection, minimum selections and manual completion. | Supports the current one-choice, combined-action and faction-then-preparation flows with the same progression logic. |
@@ -217,9 +225,15 @@ Conversation responses are available alongside event progression. They are limit
 
 These are practical architecture choices rather than a claim that the project implements every classic Gang of Four pattern. There is no separate event-bus/Observer system or polymorphic State-pattern hierarchy at this stage.
 
+## Automated Edit Mode coverage
+
+The NUnit Edit Mode assembly is `APlaceAmongLords.Tests.EditMode`. Its tests create temporary event definitions in memory and cover attribute requirements, one-time effect application, atomic rejection of invalid effects, minimum/manual completion of a multiple-choice stage, the two-stage final event, JSON save restoration, the project's complete event catalog, malformed event definitions, and missing-round detection. Run them from Unity's **Window > General > Test Runner > EditMode** panel.
+
+The runtime code is split into `APlaceAmongLords.Data` and `APlaceAmongLords.Core` assembly definitions so the test assembly can reference both without moving production code into the test assembly.
+
 ## Current boundaries and follow-up work
 
-- The prototype currently has five rounds and expects at most one event per round. Startup validation checks event IDs, round uniqueness, stage IDs, choice IDs, and stage selection configuration.
+- The prototype currently has five rounds and expects exactly one valid event per round. Startup validation checks event IDs and round coverage, event titles/descriptions, stage and choice IDs, stage selection configuration, conditions, and effects.
 - `GameSaveData.saveVersion` is currently `1`. A future change to the serialized schema should increment it and add a migration or clear compatibility response.
 - Relationship response flags use a fixed array sized for five rounds and the current six `RelationshipTarget` values. If targets or round count become content-driven, replace this with keyed progress data.
 - Resources have a lower bound of zero; relationships clamp to −5 through +5. Resource upper bounds and balancing rules are not defined yet.
@@ -230,6 +244,7 @@ These are practical architecture choices rather than a claim that the project im
 
 - `Assets/Scripts/Core/GameState.cs` — runtime state, progression and snapshot conversion.
 - `Assets/Scripts/Core/GameEventRules.cs` — condition evaluation and effect application.
+- `Assets/Scripts/Core/GameEventValidator.cs` — event catalog and definition validation.
 - `Assets/Scripts/Core/GameSaveData.cs` — JSON save schema.
 - `Assets/Scripts/Core/GameLoopController.cs` — asset loading, UI, event routing and persistence.
 - `Assets/Scripts/Data/GameEventDefinition.cs` — event, stage, condition and effect definitions.
