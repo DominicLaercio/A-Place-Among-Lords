@@ -9,6 +9,7 @@ namespace APlaceAmongLords.Core
     /// <summary>Temporary prototype interface for validating decisions and consequences.</summary>
     public sealed class GameLoopController : MonoBehaviour
     {
+        private enum ScreenMode { MainMenu, Playing, GameMenu, Ending }
         // IMGUI dimensions in pixels. Adjust these values to resize the panels.
         private const float RoomMinWidth = 320f;
         private const float RoomMaxWidth = 850f;
@@ -30,6 +31,9 @@ namespace APlaceAmongLords.Core
         private Vector2 scrollPosition;
         private string selectedConversation = "Context";
         private string notice = "Assign 8 points to your attributes to begin.";
+        private ScreenMode screenMode = ScreenMode.MainMenu;
+        private bool confirmQuit;
+        private bool confirmMainMenu;
 
         private void Awake()
         {
@@ -71,25 +75,126 @@ namespace APlaceAmongLords.Core
             ConfigureTextSizes();
             GUILayout.Label("A PLACE AMONG LORDS", TitleStyle());
             GUILayout.Space(8);
+            switch (screenMode)
+            {
+                case ScreenMode.MainMenu: DrawMainMenu(); break;
+                case ScreenMode.GameMenu: DrawGameMenu(); break;
+                case ScreenMode.Ending: DrawEndingScreen(); break;
+                default: DrawPlayingScreen(); break;
+            }
 
+            if (screenMode == ScreenMode.Playing || screenMode == ScreenMode.GameMenu)
+            {
+                GUILayout.Space(8);
+                GUILayout.Label(notice, GUI.skin.box);
+            }
+            if (confirmQuit) DrawConfirmation("Quit the game?", () => confirmQuit = false, QuitGame);
+            if (confirmMainMenu) DrawConfirmation("Return to the main menu?", () => confirmMainMenu = false, ReturnToMainMenu);
+            GUILayout.EndArea();
+        }
+
+        private void DrawMainMenu()
+        {
+            GUILayout.Space(36);
+            GUILayout.Label("A narrative strategy RPG", SectionStyle());
+            GUILayout.Space(24);
+            if (GUILayout.Button("Start New Game", GUILayout.Height(48))) BeginNewGame();
+            if (state.Attributes.IsAllocated && GUILayout.Button("Continue Current Game", GUILayout.Height(42))) screenMode = state.IsComplete ? ScreenMode.Ending : ScreenMode.Playing;
+            if (File.Exists(SavePath) && GUILayout.Button("Load Saved Game", GUILayout.Height(42)))
+            {
+                LoadGame();
+                if (state.Attributes.IsAllocated) screenMode = state.IsComplete ? ScreenMode.Ending : ScreenMode.Playing;
+            }
+            GUILayout.Space(16);
+            if (GUILayout.Button("Quit", GUILayout.Height(42))) confirmQuit = true;
+            GUILayout.Space(20);
+            GUILayout.Label("Five rounds. A realm on the edge of rebellion.");
+        }
+
+        private void BeginNewGame()
+        {
+            state = new GameState();
+            dialogueReplies.Clear();
+            diplomacy = warfare = management = combat = 0;
+            selectedConversation = "Context";
+            scrollPosition = Vector2.zero;
+            notice = "Assign 8 points to your attributes to begin.";
+            screenMode = ScreenMode.Playing;
+        }
+
+        private void DrawPlayingScreen()
+        {
+            if (state.IsComplete)
+            {
+                screenMode = ScreenMode.Ending;
+                DrawEndingScreen();
+                return;
+            }
             if (!state.Attributes.IsAllocated)
             {
                 DrawAttributeSetup();
+                return;
             }
-            else
-            {
-                scrollPosition = GUILayout.BeginScrollView(scrollPosition);
-                DrawGameState();
-                GUILayout.EndScrollView();
-            }
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+            DrawGameState();
+            GUILayout.EndScrollView();
+        }
 
-            GUILayout.Space(8);
-            GUILayout.Label(notice, GUI.skin.box);
-            GUILayout.EndArea();
+        private void DrawGameMenu()
+        {
+            GUILayout.Space(28);
+            GUILayout.Label("Game Menu", SectionStyle());
+            if (GUILayout.Button("Resume", GUILayout.Height(42))) screenMode = ScreenMode.Playing;
+            if (GUILayout.Button("Save Game", GUILayout.Height(42))) SaveGame();
+            GUI.enabled = File.Exists(SavePath);
+            if (GUILayout.Button("Load Saved Game", GUILayout.Height(42)))
+            {
+                LoadGame();
+                if (state.Attributes.IsAllocated) screenMode = state.IsComplete ? ScreenMode.Ending : ScreenMode.Playing;
+            }
+            GUI.enabled = true;
+            if (GUILayout.Button("Main Menu", GUILayout.Height(42))) confirmMainMenu = true;
+            if (GUILayout.Button("Quit", GUILayout.Height(42))) confirmQuit = true;
+        }
+
+        private void DrawEndingScreen()
+        {
+            GUILayout.Space(25);
+            DrawEnding();
+            GUILayout.Space(18);
+            if (GUILayout.Button("Return to Main Menu", GUILayout.Height(44))) ReturnToMainMenu();
+            if (GUILayout.Button("Quit", GUILayout.Height(44))) confirmQuit = true;
+        }
+
+        private void DrawConfirmation(string question, Action cancel, Action confirm)
+        {
+            GUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label(question);
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Confirm", GUILayout.Height(36))) confirm();
+            if (GUILayout.Button("Cancel", GUILayout.Height(36))) cancel();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+        }
+
+        private void ReturnToMainMenu()
+        {
+            confirmMainMenu = false;
+            screenMode = ScreenMode.MainMenu;
+        }
+
+        private void QuitGame()
+        {
+            confirmQuit = false;
+            Application.Quit();
         }
 
         private void DrawAttributeSetup()
         {
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Game Menu", GUILayout.Width(140))) screenMode = ScreenMode.GameMenu;
+            GUILayout.EndHorizontal();
             if (File.Exists(SavePath) && GUILayout.Button("Load Saved Game", GUILayout.Height(34)))
                 LoadGame();
 
@@ -128,6 +233,7 @@ namespace APlaceAmongLords.Core
         {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Game Menu", GUILayout.Width(140))) screenMode = ScreenMode.GameMenu;
             if (GUILayout.Button("Save Game", GUILayout.Width(140))) SaveGame();
             if (GUILayout.Button("Load Game", GUILayout.Width(140))) LoadGame();
             GUILayout.EndHorizontal();
